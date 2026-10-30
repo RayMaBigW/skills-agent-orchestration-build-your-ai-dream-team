@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="dashboard">
+      <header class="dashboard__header">
+        <h1>Project Pulse</h1>
+        <p class="dashboard__subtitle">Active projects, owners, status, recent activity, and priority at a glance.</p>
+        <p class="dashboard__summary" hidden style="display: none"></p>
+      </header>
+
+      <p class="dashboard__message" role="status" aria-live="polite">Loading projects…</p>
+
+      <ul class="project-grid" aria-label="Projects" hidden style="display: none"></ul>
+    </main>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var KNOWN_STATUSES = ["on-track", "at-risk", "blocked", "completed"];
+        var KNOWN_PRIORITIES = ["high", "medium", "low"];
+        var STATUS_LABELS = {
+          "on-track": "On track",
+          "at-risk": "At risk",
+          "blocked": "Blocked",
+          "completed": "Completed"
+        };
+        var PRIORITY_LABELS = { high: "High", medium: "Medium", low: "Low" };
+        var LAUNCH_HINT = "Open with the Run Project Pulse Dashboard launch configuration.";
+
+        var messageEl = document.querySelector(".dashboard__message");
+        var gridEl = document.querySelector(".project-grid");
+        var summaryEl = document.querySelector(".dashboard__summary");
+        var subtitleEl = document.querySelector(".dashboard__subtitle");
+
+        // Toggles both the hidden attribute and inline display, so stylesheet
+        // rules such as "display: grid" cannot accidentally reveal hidden elements.
+        function setVisible(el, isVisible) {
+          el.hidden = !isVisible;
+          el.style.display = isVisible ? "" : "none";
+        }
+
+        function showMessage(text, isError) {
+          messageEl.textContent = text;
+          messageEl.classList.toggle("dashboard__message--error", Boolean(isError));
+          setVisible(messageEl, true);
+          setVisible(gridEl, false);
+          setVisible(summaryEl, false);
+        }
+
+        // Returns a trimmed string, or the placeholder when the value is missing or empty.
+        function textOrPlaceholder(value, placeholder) {
+          if (value === undefined || value === null) {
+            return placeholder;
+          }
+          var text = String(value).trim();
+          return text === "" ? placeholder : text;
+        }
+
+        function normalizeKey(value) {
+          return typeof value === "string" ? value.trim().toLowerCase() : "";
+        }
+
+        function createElement(tagName, className, text) {
+          var el = document.createElement(tagName);
+          if (className) {
+            el.className = className;
+          }
+          if (text !== undefined) {
+            el.textContent = text;
+          }
+          return el;
+        }
+
+        // Builds "Label: <badge>" so each badge has a visible text label.
+        function createLabeledField(labelText, valueEl) {
+          var field = createElement("p", "project-card__field");
+          field.appendChild(createElement("span", "project-card__label", labelText + ": "));
+          field.appendChild(valueEl);
+          return field;
+        }
+
+        function createStatusBadge(rawStatus) {
+          var key = normalizeKey(rawStatus);
+          var isKnown = KNOWN_STATUSES.indexOf(key) !== -1;
+          var modifier = isKnown ? key : "unknown";
+          var label = isKnown ? STATUS_LABELS[key] : textOrPlaceholder(rawStatus, "Unknown");
+          return createElement("span", "status-badge status-badge--" + modifier, label);
+        }
+
+        function createPriorityBadge(rawPriority) {
+          var key = normalizeKey(rawPriority);
+          var isKnown = KNOWN_PRIORITIES.indexOf(key) !== -1;
+          var modifier = isKnown ? key : "unknown";
+          var label = isKnown ? PRIORITY_LABELS[key] : textOrPlaceholder(rawPriority, "Unknown");
+          return createElement("span", "priority-badge priority-badge--" + modifier, label);
+        }
+
+        function createProjectCard(project) {
+          var safeProject = project && typeof project === "object" ? project : {};
+          var statusKey = normalizeKey(safeProject.status);
+          var priorityKey = normalizeKey(safeProject.priority);
+
+          var item = document.createElement("li");
+          var card = createElement("article", "project-card");
+          card.setAttribute("data-status", KNOWN_STATUSES.indexOf(statusKey) !== -1 ? statusKey : "unknown");
+          card.setAttribute("data-priority", KNOWN_PRIORITIES.indexOf(priorityKey) !== -1 ? priorityKey : "unknown");
+          if (typeof safeProject.id === "string" && safeProject.id.trim() !== "") {
+            card.setAttribute("data-id", safeProject.id.trim());
+          }
+
+          card.appendChild(createElement("h2", "project-card__name", textOrPlaceholder(safeProject.name, "Untitled project")));
+
+          var owner = createElement("p", "project-card__owner");
+          owner.appendChild(createElement("span", "project-card__label", "Owner: "));
+          owner.appendChild(document.createTextNode(textOrPlaceholder(safeProject.owner, "Unassigned")));
+          card.appendChild(owner);
+
+          card.appendChild(createLabeledField("Status", createStatusBadge(safeProject.status)));
+          card.appendChild(createLabeledField("Priority", createPriorityBadge(safeProject.priority)));
+
+          var activity = createElement("p", "project-card__activity");
+          activity.appendChild(createElement("span", "project-card__label", "Recent activity: "));
+          activity.appendChild(document.createTextNode(textOrPlaceholder(safeProject.recentActivity, "No recent activity")));
+          card.appendChild(activity);
+
+          card.appendChild(createElement("p", "project-card__summary", textOrPlaceholder(safeProject.summary, "No summary provided.")));
+
+          item.appendChild(card);
+          return item;
+        }
+
+        function renderSummary(projects) {
+          var counts = {};
+          projects.forEach(function (project) {
+            var key = normalizeKey(project && project.status);
+            var bucket = KNOWN_STATUSES.indexOf(key) !== -1 ? key : "unknown";
+            counts[bucket] = (counts[bucket] || 0) + 1;
+          });
+
+          var parts = [projects.length + (projects.length === 1 ? " project" : " projects")];
+          KNOWN_STATUSES.forEach(function (status) {
+            if (counts[status]) {
+              parts.push(counts[status] + " " + STATUS_LABELS[status].toLowerCase());
+            }
+          });
+          if (counts.unknown) {
+            parts.push(counts.unknown + " unknown status");
+          }
+          summaryEl.textContent = parts.join(" · ");
+          setVisible(summaryEl, true);
+        }
+
+        function renderProjects(data) {
+          if (!data || typeof data !== "object" || !Array.isArray(data.projects)) {
+            showMessage("The project data is malformed: expected a top-level \"projects\" list.", true);
+            return;
+          }
+
+          var projects = data.projects;
+          if (projects.length === 0) {
+            showMessage("No projects yet. Add a project to project-data.json to see it here.", false);
+            return;
+          }
+
+          if (typeof data.lastUpdated === "string" && data.lastUpdated.trim() !== "") {
+            subtitleEl.textContent += " Last updated " + data.lastUpdated.trim() + ".";
+          }
+
+          gridEl.replaceChildren();
+          projects.forEach(function (project) {
+            gridEl.appendChild(createProjectCard(project));
+          });
+
+          renderSummary(projects);
+          messageEl.textContent = "";
+          messageEl.classList.remove("dashboard__message--error");
+          setVisible(messageEl, false);
+          setVisible(gridEl, true);
+        }
+
+        function loadProjects() {
+          if (window.location.protocol === "file:") {
+            showMessage("Project data can't load from a file:// page. " + LAUNCH_HINT, true);
+            return;
+          }
+
+          fetch("project-data.json")
+            .catch(function () {
+              throw new Error("Could not reach project data. " + LAUNCH_HINT);
+            })
+            .then(function (response) {
+              if (!response.ok) {
+                throw new Error("Could not load project data (HTTP " + response.status + " " + response.statusText + ").");
+              }
+              return response.text();
+            })
+            .then(function (body) {
+              var data;
+              try {
+                data = JSON.parse(body);
+              } catch (parseError) {
+                throw new Error("The project data is not valid JSON: " + parseError.message);
+              }
+              renderProjects(data);
+            })
+            .catch(function (error) {
+              var detail = error && error.message ? error.message : "Unknown error while loading projects.";
+              showMessage(detail, true);
+            });
+        }
+
+        loadProjects();
+      })();
+    </script>
+  </body>
+</html>

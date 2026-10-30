@@ -1,0 +1,59 @@
+{
+  "lastUpdated": "2026-10-30",
+  "projects": [
+    {
+      "id": "pulse-api",
+      "name": "Pulse API",
+      "owner": "Mona",
+      "status": "on-track",
+      "priority": "high",
+      "recentActivity": "Merged PR #42: add caching layer (2 days ago)",
+      "summary": "Backend service that aggregates project health signals."
+    },
+    {
+      "id": "design-system",
+      "name": "Design System Refresh",
+      "owner": "Priya",
+      "status": "at-risk",
+      "priority": "medium",
+      "recentActivity": "Color token audit found 12 contrast failures (yesterday)",
+      "summary": "Updating shared UI components and tokens to meet accessibility targets."
+    },
+    {
+      "id": "mobile-onboarding",
+      "name": "Mobile Onboarding",
+      "owner": "Diego",
+      "status": "blocked",
+      "priority": "high",
+      "recentActivity": "Waiting on legal review of the new consent screen (5 days ago)",
+      "summary": "A shorter first-run flow for the iOS and Android apps."
+    },
+    {
+      "id": "docs-portal",
+      "name": "Docs Portal",
+      "owner": "Sam",
+      "status": "completed",
+      "priority": "low",
+      "recentActivity": "Launched v2 with full-text search (last week)",
+      "summary": "Contributor documentation site with guides and API references."
+    },
+    {
+      "id": "ci-speedup",
+      "name": "CI Speedup",
+      "owner": "Alex",
+      "status": "on-track",
+      "priority": "medium",
+      "recentActivity": "Parallelized test shards; build time down 38% (3 days ago)",
+      "summary": "Cutting pull request feedback time by caching and splitting test runs."
+    },
+    {
+      "id": "analytics-export",
+      "name": "Analytics Export",
+      "owner": "Jordan",
+      "status": "at-risk",
+      "priority": "low",
+      "recentActivity": "CSV export prototype ready for feedback (4 days ago)",
+      "summary": "Lets teams download project health metrics for their own reports."
+    }
+  ]
+}

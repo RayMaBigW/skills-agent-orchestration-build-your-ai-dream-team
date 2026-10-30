@@ -1,0 +1,616 @@
+/* ==========================================================================
+   Project Pulse — dashboard styles
+   Owner: Designer. Implements the class contract in docs/project-pulse-plan.md §4.2.
+   All text/background pairs below are chosen for ≥ 4.5:1 contrast (WCAG AA).
+   ========================================================================== */
+
+/* ---------- Design tokens ---------- */
+:root {
+  color-scheme: light dark;
+
+  /* Surfaces & text */
+  --pp-bg: #f3f5fa;
+  --pp-surface: #ffffff;
+  --pp-surface-raised: #ffffff;
+  --pp-border: #d5dbe5;
+  --pp-text: #172033;          /* ~15.9:1 on surface */
+  --pp-text-muted: #4a5568;    /* ~7.5:1 on surface  */
+  --pp-heading: #0f172a;
+  --pp-accent: #3730a3;        /* brand indigo, ~10:1 on surface */
+  --pp-focus: #2563eb;
+
+  /* Header band */
+  --pp-header-from: #312e81;
+  --pp-header-to: #1e40af;
+  --pp-header-text: #ffffff;   /* ≥ 8:1 on both gradient stops */
+  --pp-header-muted: #e0e7ff;  /* ≥ 7:1 on both gradient stops */
+
+  /* Status badges (text on tinted bg) */
+  --pp-status-on-track-bg: #dcfce7;  --pp-status-on-track-fg: #166534;  /* ~6.5:1 */
+  --pp-status-at-risk-bg: #fef3c7;   --pp-status-at-risk-fg: #92400e;   /* ~6.4:1 */
+  --pp-status-blocked-bg: #fee2e2;   --pp-status-blocked-fg: #991b1b;   /* ~6.8:1 */
+  --pp-status-completed-bg: #dbeafe; --pp-status-completed-fg: #1e40af; /* ~7.2:1 */
+  --pp-status-unknown-bg: #e5e7eb;   --pp-status-unknown-fg: #374151;   /* ~8.6:1 */
+
+  /* Priority */
+  --pp-prio-high: #be123c;            /* accent border */
+  --pp-prio-high-bg: #9f1239;         --pp-prio-high-fg: #ffffff;   /* ~7.9:1 */
+  --pp-prio-medium: #6d28d9;
+  --pp-prio-medium-bg: #ede9fe;       --pp-prio-medium-fg: #5b21b6; /* ~7.1:1 */
+  --pp-prio-low: #94a3b8;
+  --pp-prio-low-bg: #f1f5f9;          --pp-prio-low-fg: #475569;    /* ~7.2:1 */
+  --pp-prio-unknown-bg: transparent;  --pp-prio-unknown-fg: #374151;
+
+  /* Error message */
+  --pp-error-bg: #fef2f2;
+  --pp-error-border: #b91c1c;
+  --pp-error-fg: #7f1d1d;            /* ~9:1 */
+
+  /* Shape, depth, rhythm */
+  --pp-radius-lg: 16px;
+  --pp-radius-md: 12px;
+  --pp-radius-pill: 999px;
+  --pp-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.08);
+  --pp-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.06);
+  --pp-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.14), 0 4px 8px rgba(15, 23, 42, 0.08);
+  --pp-space-1: 0.25rem;
+  --pp-space-2: 0.5rem;
+  --pp-space-3: 0.75rem;
+  --pp-space-4: 1rem;
+  --pp-space-5: 1.5rem;
+  --pp-space-6: 2rem;
+  --pp-transition: 160ms ease-out;
+
+  --pp-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* Dark theme: every pair re-checked for ≥ 4.5:1 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --pp-bg: #0b1120;
+    --pp-surface: #151d2e;
+    --pp-surface-raised: #1b2438;
+    --pp-border: #2c3a52;
+    --pp-text: #e5e9f2;          /* ~14:1 */
+    --pp-text-muted: #aab4c5;    /* ~8:1  */
+    --pp-heading: #f8fafc;
+    --pp-accent: #a5b4fc;
+    --pp-focus: #93c5fd;
+
+    --pp-header-from: #1e1b4b;
+    --pp-header-to: #172554;
+
+    --pp-status-on-track-bg: #14532d;  --pp-status-on-track-fg: #bbf7d0;
+    --pp-status-at-risk-bg: #713f12;   --pp-status-at-risk-fg: #fde68a;
+    --pp-status-blocked-bg: #7f1d1d;   --pp-status-blocked-fg: #fecaca;
+    --pp-status-completed-bg: #1e3a8a; --pp-status-completed-fg: #bfdbfe;
+    --pp-status-unknown-bg: #334155;   --pp-status-unknown-fg: #e2e8f0;
+
+    --pp-prio-high: #fb7185;
+    --pp-prio-high-bg: #be123c;        --pp-prio-high-fg: #ffffff;   /* ~6.2:1 */
+    --pp-prio-medium: #a78bfa;
+    --pp-prio-medium-bg: #3b0764;      --pp-prio-medium-fg: #e9d5ff;
+    --pp-prio-low: #64748b;
+    --pp-prio-low-bg: #1e293b;         --pp-prio-low-fg: #cbd5e1;
+    --pp-prio-unknown-fg: #e2e8f0;
+
+    --pp-error-bg: #2a1215;
+    --pp-error-border: #f87171;
+    --pp-error-fg: #fecaca;
+
+    --pp-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --pp-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+    --pp-shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Honour the `hidden` attribute even when a component rule sets display
+   (the page script also sets inline display:none; this never fights it). */
+[hidden] {
+  display: none !important;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--pp-bg);
+  color: var(--pp-text);
+  font-family: var(--pp-font);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+  outline: 3px solid var(--pp-focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+a {
+  color: var(--pp-accent);
+}
+
+/* ---------- Dashboard shell ---------- */
+.dashboard {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--pp-space-6) var(--pp-space-5) 3rem;
+}
+
+.dashboard__header {
+  position: relative;
+  margin-bottom: var(--pp-space-5);
+  padding: var(--pp-space-6) var(--pp-space-6);
+  border-radius: var(--pp-radius-lg);
+  background: linear-gradient(135deg, var(--pp-header-from), var(--pp-header-to));
+  color: var(--pp-header-text);
+  box-shadow: var(--pp-shadow-md);
+  overflow-wrap: anywhere;
+}
+
+.dashboard__header h1 {
+  margin: 0;
+  font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--pp-header-text);
+}
+
+/* Small "pulse" mark before the title — decorative only */
+.dashboard__header h1::before {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  margin-right: 0.45em;
+  vertical-align: 0.1em;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 0 0.18em rgba(74, 222, 128, 0.3);
+}
+
+.dashboard__subtitle {
+  margin: var(--pp-space-2) 0 0;
+  max-width: 60ch;
+  font-size: 1.05rem;
+  color: var(--pp-header-muted);
+}
+
+/* Summary is a plain-text line ("6 projects · 2 on track · …").
+   Default (outside the header): a light surface strip. */
+.dashboard__summary {
+  display: block;
+  margin: 0 0 var(--pp-space-5);
+  padding: var(--pp-space-3) var(--pp-space-4);
+  border: 1px solid var(--pp-border);
+  border-radius: var(--pp-radius-md);
+  background: var(--pp-surface);
+  box-shadow: var(--pp-shadow-sm);
+  color: var(--pp-text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+/* Actual markup places the summary inside the gradient header:
+   render it as a translucent chip with white text (≥ 7:1 on both stops). */
+.dashboard__header .dashboard__summary {
+  display: inline-block;
+  max-width: 100%;
+  margin: var(--pp-space-4) 0 0;
+  padding: var(--pp-space-2) var(--pp-space-4);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--pp-radius-pill);
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: none;
+  color: var(--pp-header-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Loading / empty / error state */
+.dashboard__message {
+  margin: 0 0 var(--pp-space-5);
+  padding: var(--pp-space-6) var(--pp-space-5);
+  border: 2px dashed var(--pp-border);
+  border-radius: var(--pp-radius-lg);
+  background: var(--pp-surface);
+  color: var(--pp-text-muted);
+  font-size: 1.05rem;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.dashboard__message:empty {
+  display: none;
+}
+
+.dashboard__message--error {
+  border: 1px solid var(--pp-error-border);
+  border-left-width: 6px;
+  background: var(--pp-error-bg);
+  color: var(--pp-error-fg);
+  text-align: left;
+  font-weight: 500;
+  box-shadow: var(--pp-shadow-sm);
+}
+
+/* Non-colour cue for errors */
+.dashboard__message--error::before {
+  content: "⚠ ";
+  content: "⚠ " / "";
+  font-weight: 700;
+}
+
+/* ---------- Grid ---------- */
+.project-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--pp-space-5);
+  align-items: stretch;
+}
+
+.project-grid > li {
+  display: flex;   /* lets the card fill the row height */
+  min-width: 0;    /* prevents long words from blowing out the track */
+}
+
+.project-grid:empty {
+  display: none;
+}
+
+/* ---------- Card ---------- */
+.project-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pp-space-3);
+  width: 100%;
+  min-width: 0;
+  padding: var(--pp-space-5);
+  border: 1px solid var(--pp-border);
+  border-left: 4px solid var(--pp-border);
+  border-radius: var(--pp-radius-lg);
+  background: var(--pp-surface);
+  box-shadow: var(--pp-shadow-md);
+  overflow-wrap: anywhere;
+  word-break: normal;
+  transition: transform var(--pp-transition), box-shadow var(--pp-transition),
+    border-color var(--pp-transition);
+}
+
+.project-card:hover,
+.project-card:focus-within {
+  transform: translateY(-3px);
+  box-shadow: var(--pp-shadow-lg);
+}
+
+.project-card:focus-within {
+  outline: 3px solid var(--pp-focus);
+  outline-offset: 2px;
+}
+
+/* Cards may be made focusable (tabindex) by the markup */
+.project-card:focus-visible {
+  outline: 3px solid var(--pp-focus);
+  outline-offset: 3px;
+}
+
+/* Priority treatment: high = strong, medium = moderate, low = subtle */
+.project-card[data-priority="high"] {
+  border-left: 6px solid var(--pp-prio-high);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--pp-prio-high) 7%, transparent), transparent 45%),
+    var(--pp-surface);
+  box-shadow: var(--pp-shadow-lg);
+}
+
+.project-card[data-priority="medium"] {
+  border-left: 4px solid var(--pp-prio-medium);
+}
+
+.project-card[data-priority="low"] {
+  border-left: 2px solid var(--pp-prio-low);
+  box-shadow: var(--pp-shadow-sm);
+}
+
+.project-card[data-priority="low"]:hover,
+.project-card[data-priority="low"]:focus-within {
+  box-shadow: var(--pp-shadow-md);
+}
+
+/* Completed projects recede slightly (text keeps full contrast) */
+.project-card[data-status="completed"] {
+  background-color: var(--pp-surface-raised);
+}
+
+/* ---------- Card content ---------- */
+.project-card__name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--pp-heading);
+}
+
+/* Field labels ("Owner:", "Status:", "Priority:", "Recent activity:") —
+   small, muted, uppercase so the values carry the visual weight.
+   Muted text keeps ≥ 7:1 on both the card surface and the activity panel. */
+.project-card__label {
+  color: var(--pp-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.project-card__owner {
+  margin: 0;
+  color: var(--pp-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.project-card__owner .project-card__label {
+  margin-right: 0.15em;
+}
+
+/* "Status: <badge>" and "Priority: <badge>" rows.
+   Fixed label column so badges line up between the two rows. */
+.project-card__field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pp-space-1) var(--pp-space-2);
+  margin: 0;
+}
+
+.project-card__field .project-card__label {
+  flex: 0 0 5.5rem;
+}
+
+/* Pull the two badge rows closer together so they read as one group */
+.project-card__field + .project-card__field {
+  margin-top: calc(var(--pp-space-2) * -1);
+}
+
+.project-card__activity {
+  margin: 0;
+  padding: var(--pp-space-3);
+  border-radius: var(--pp-radius-md);
+  background: var(--pp-bg);
+  color: var(--pp-text);
+  font-size: 0.925rem;
+  line-height: 1.5;
+}
+
+/* Label sits on its own line above the activity text */
+.project-card__activity .project-card__label {
+  display: block;
+  margin-bottom: var(--pp-space-1);
+}
+
+.project-card__summary {
+  margin: 0;
+  margin-top: auto; /* anchor summary to the card bottom for even rows */
+  padding-top: var(--pp-space-3);
+  border-top: 1px solid var(--pp-border);
+  color: var(--pp-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* ---------- Badges (shared pill shape) ---------- */
+.status-badge,
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  max-width: 100%;
+  padding: 0.25em 0.75em;
+  border: 1px solid transparent;
+  border-radius: var(--pp-radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  /* Labels arrive human-readable ("On track"); unknown values show raw. */
+  text-transform: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  vertical-align: middle;
+}
+
+/* Status: tinted pill + shape glyph so colour is never the only cue */
+.status-badge::before {
+  content: "●";
+  content: "●" / "";
+  font-size: 0.85em;
+  line-height: 1;
+}
+
+.status-badge--on-track {
+  background: var(--pp-status-on-track-bg);
+  color: var(--pp-status-on-track-fg);
+  border-color: color-mix(in srgb, var(--pp-status-on-track-fg) 25%, transparent);
+}
+.status-badge--on-track::before { content: "●"; content: "●" / ""; }
+
+.status-badge--at-risk {
+  background: var(--pp-status-at-risk-bg);
+  color: var(--pp-status-at-risk-fg);
+  border-color: color-mix(in srgb, var(--pp-status-at-risk-fg) 25%, transparent);
+}
+.status-badge--at-risk::before { content: "▲"; content: "▲" / ""; }
+
+.status-badge--blocked {
+  background: var(--pp-status-blocked-bg);
+  color: var(--pp-status-blocked-fg);
+  border-color: color-mix(in srgb, var(--pp-status-blocked-fg) 25%, transparent);
+}
+.status-badge--blocked::before { content: "■"; content: "■" / ""; }
+
+.status-badge--completed {
+  background: var(--pp-status-completed-bg);
+  color: var(--pp-status-completed-fg);
+  border-color: color-mix(in srgb, var(--pp-status-completed-fg) 25%, transparent);
+}
+.status-badge--completed::before { content: "✓"; content: "✓" / ""; }
+
+.status-badge--unknown {
+  background: var(--pp-status-unknown-bg);
+  color: var(--pp-status-unknown-fg);
+  border-color: var(--pp-border);
+}
+.status-badge--unknown::before { content: "?"; content: "?" / ""; }
+
+/* Priority: weight of treatment scales with priority */
+.priority-badge--high {
+  background: var(--pp-prio-high-bg);
+  color: var(--pp-prio-high-fg);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.priority-badge--high::before { content: "↑"; content: "↑" / ""; }
+
+.priority-badge--medium {
+  background: var(--pp-prio-medium-bg);
+  color: var(--pp-prio-medium-fg);
+  border-color: color-mix(in srgb, var(--pp-prio-medium-fg) 25%, transparent);
+}
+.priority-badge--medium::before { content: "→"; content: "→" / ""; }
+
+.priority-badge--low {
+  background: var(--pp-prio-low-bg);
+  color: var(--pp-prio-low-fg);
+  border-color: var(--pp-border);
+  font-weight: 600;
+}
+.priority-badge--low::before { content: "↓"; content: "↓" / ""; }
+
+.priority-badge--unknown {
+  background: var(--pp-prio-unknown-bg);
+  color: var(--pp-prio-unknown-fg);
+  border: 1px dashed currentColor;
+  font-weight: 600;
+}
+
+/* ---------- Responsive ---------- */
+
+/* Phones (~375px): single column, tighter padding, no horizontal scroll */
+@media (max-width: 599px) {
+  .dashboard {
+    padding: var(--pp-space-4) var(--pp-space-3) var(--pp-space-6);
+  }
+
+  .dashboard__header {
+    padding: var(--pp-space-5) var(--pp-space-4);
+    border-radius: var(--pp-radius-md);
+  }
+
+  .project-grid {
+    grid-template-columns: 1fr;
+    gap: var(--pp-space-4);
+  }
+
+  .project-card {
+    padding: var(--pp-space-4);
+  }
+}
+
+/* Tablets (~768px): exactly two columns */
+@media (min-width: 600px) and (max-width: 959px) {
+  .project-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Desktop (≥ 960px): auto-fill gives 3 at ~1280px; 4 on very wide screens is capped by max-width */
+@media (min-width: 960px) {
+  .project-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+/* ---------- Motion & contrast preferences ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+
+  .project-card:hover,
+  .project-card:focus-within {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .project-card,
+  .status-badge,
+  .priority-badge,
+  .dashboard__message {
+    border: 1px solid CanvasText;
+  }
+
+  .project-card[data-priority="high"] {
+    border-left-width: 6px;
+  }
+
+  .dashboard__header {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* ---------- Print ---------- */
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .dashboard__header {
+    background: none;
+    color: #000;
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+
+  .dashboard__header h1,
+  .dashboard__subtitle,
+  .dashboard__header .dashboard__summary {
+    color: #000;
+  }
+
+  .project-card {
+    box-shadow: none;
+    break-inside: avoid;
+    transform: none;
+  }
+}
